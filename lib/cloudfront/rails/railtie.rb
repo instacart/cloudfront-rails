@@ -8,11 +8,7 @@ module Cloudfront
         end
       end
 
-      if ::Rails.version.start_with? '4.' || Rack::Request.include?(Rack::Request::Helpers)
-        Rack::Request.prepend CheckTrustedProxies
-      else
-        Rack::Request::Helpers.prepend CheckTrustedProxies
-      end
+      Rack::Request.prepend CheckTrustedProxies
 
       module RemoteIpProxies
         def proxies
