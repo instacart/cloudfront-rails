@@ -6,6 +6,11 @@ module Cloudfront
         def trusted_proxy?(ip)
           ::Rails.application.config.cloudfront.ips.any?{ |proxy| proxy === ip } || super
         end
+
+        def split_ip_addresses(ip_addresses)
+          # throw out port numbers so this is semi-compliant with https://tools.ietf.org/html/rfc7239
+          super(ip_addresses).map { |ip_string| strip_port(ip_string) }
+        end
       end
 
       Rack::Request.prepend CheckTrustedProxies
