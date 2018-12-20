@@ -4,7 +4,7 @@ module Cloudfront
 
       module CheckTrustedProxies
         def trusted_proxy?(ip)
-          ::Rails.application.config.cloudfront.ips.any?{ |proxy| proxy === ip } || super
+          ::Rails.application.config.cloudfront.ips.any?{ |proxy| proxy === ip rescue false} || super
         end
 
         def split_ip_addresses(ip_addresses)
