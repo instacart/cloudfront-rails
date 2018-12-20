@@ -7,6 +7,19 @@ module Cloudfront
           ::Rails.application.config.cloudfront.ips.any?{ |proxy| proxy === ip rescue false} || super
         end
 
+        def strip_port(ip_address)
+          # Stolen outright from Rack 2.1.0
+          # IPv6 format with optional port: "[2001:db8:cafe::17]:47011"
+          # returns: "2001:db8:cafe::17"
+          return ip_address.gsub(/(^\[|\]:\d+$)/, '') if ip_address.include?('[')
+
+          # IPv4 format with optional port: "192.0.2.43:47011"
+          # returns: "192.0.2.43"
+          return ip_address.gsub(/:\d+$/, '') if ip_address.count(':') == 1
+
+          ip_address
+        end
+
         def split_ip_addresses(ip_addresses)
           # throw out port numbers so this is semi-compliant with https://tools.ietf.org/html/rfc7239
           super(ip_addresses).map { |ip_string| strip_port(ip_string) }
